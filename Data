@@ -1,0 +1,25 @@
+// Data/AppDbContext.cs
+public class AppDbContext : DbContext
+{
+    public DbSet<Equipo> Equipos { get; set; }
+    public DbSet<Departamento> Departamentos { get; set; }
+    public DbSet<Mantenimiento> Mantenimientos { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseSqlServer(@"Server=.;Database=EquipoComputoDB;Trusted_Connection=true;");
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Equipo>()
+            .HasOne(e => e.Departamento)
+            .WithMany(d => d.Equipos)
+            .HasForeignKey(e => e.DepartamentoId);
+
+        modelBuilder.Entity<Mantenimiento>()
+            .HasOne(m => m.Equipo)
+            .WithMany(e => e.Mantenimientos)
+            .HasForeignKey(m => m.EquipoId);
+    }
+}
