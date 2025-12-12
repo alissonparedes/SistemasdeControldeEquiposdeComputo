@@ -1,0 +1,56 @@
+// Forms/frmEquipos.cs - Extracto principal
+public partial class frmEquipos : Form
+{
+    private AppDbContext _context;
+    private List<Departamento> _departamentos;
+
+    public frmEquipos()
+    {
+        InitializeComponent();
+        _context = new AppDbContext();
+        CargarDatos();
+    }
+
+    private void CargarDatos()
+    {
+        _departamentos = _context.Departamentos.ToList();
+        cmbDepartamento.DataSource = _departamentos;
+        cmbDepartamento.DisplayMember = "Nombre";
+        cmbDepartamento.ValueMember = "Id";
+
+        dgvEquipos.DataSource = _context.Equipos
+            .Include(e => e.Departamento)
+            .ToList();
+    }
+
+    private void btnGuardar_Click(object sender, EventArgs e)
+    {
+        var equipo = new Equipo
+        {
+            NumeroSerie = txtNumeroSerie.Text,
+            Marca = txtMarca.Text,
+            Modelo = txtModelo.Text,
+            Tipo = txtTipo.Text,
+            FechaAdquisicion = dtpFechaAdquisicion.Value,
+            DepartamentoId = (int)cmbDepartamento.SelectedValue
+        };
+
+        _context.Equipos.Add(equipo);
+        _context.SaveChanges();
+        CargarDatos();
+        LimpiarCampos();
+        MessageBox.Show("Equipo guardado exitosamente");
+    }
+
+    private void btnEliminar_Click(object sender, EventArgs e)
+    {
+        if (dgvEquipos.CurrentRow != null)
+        {
+            int id = (int)dgvEquipos.CurrentRow.Cells["Id"].Value;
+            var equipo = _context.Equipos.Find(id);
+            _context.Equipos.Remove(equipo);
+            _context.SaveChanges();
+            CargarDatos();
+        }
+    }
+}
