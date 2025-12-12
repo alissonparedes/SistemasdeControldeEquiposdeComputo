@@ -1,0 +1,41 @@
+// Services/ReportService.cs
+public class ReportService
+{
+    private readonly AppDbContext _context;
+
+    public ReportService()
+    {
+        _context = new AppDbContext();
+    }
+
+    public List<ReporteEquipo> GetReportePorDepartamento(int departamentoId)
+    {
+        return _context.Equipos
+            .Where(e => e.DepartamentoId == departamentoId)
+            .Include(e => e.Departamento)
+            .Include(e => e.Mantenimientos)
+            .Select(e => new ReporteEquipo
+            {
+                NumeroSerie = e.NumeroSerie,
+                Marca = e.Marca,
+                Modelo = e.Modelo,
+                Tipo = e.Tipo,
+                FechaAdquisicion = e.FechaAdquisicion,
+                Departamento = e.Departamento.Nombre,
+                TotalMantenimientos = e.Mantenimientos.Count(),
+                CostoTotalMantenimiento = e.Mantenimientos.Sum(m => m.Costo)
+            }).ToList();
+    }
+}
+
+public class ReporteEquipo
+{
+    public string NumeroSerie { get; set; }
+    public string Marca { get; set; }
+    public string Modelo { get; set; }
+    public string Tipo { get; set; }
+    public DateTime FechaAdquisicion { get; set; }
+    public string Departamento { get; set; }
+    public int TotalMantenimientos { get; set; }
+    public decimal CostoTotalMantenimiento { get; set; }
+}
