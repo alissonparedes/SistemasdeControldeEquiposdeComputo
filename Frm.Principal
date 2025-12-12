@@ -1,0 +1,27 @@
+public partial class frmPrincipal : Form
+{
+    public frmPrincipal()
+    {
+        InitializeComponent();
+    }
+
+    private void btnEquipos_Click(object sender, EventArgs e)
+    {
+        new frmEquipos().ShowDialog();
+    }
+
+    private void btnDepartamentos_Click(object sender, EventArgs e)
+    {
+        new frmDepartamentos().ShowDialog();
+    }
+
+    private void btnMantenimiento_Click(object sender, EventArgs e)
+    {
+        new frmMantenimiento().ShowDialog();
+    }
+
+    private void btnReportes_Click(object sender, EventArgs e)
+    {
+        new frmReportes().ShowDialog();
+    }
+}
